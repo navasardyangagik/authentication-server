@@ -1,2 +1,2 @@
 # authentication-server
-A basic flask server that handles license authorization.
+A basic Flask server that handles license authorization.
