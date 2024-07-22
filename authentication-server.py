@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route('/verify_license', methods=['POST'])
 def verify_license():
-    keylist = open('Key_List.txt','r')
+    keylist = open('key-list.txt','r')
     VALID_LICENSE_KEYS = keylist.readlines()
 
     i=0
