@@ -1,26 +1,34 @@
 from flask import Flask, request, jsonify
+import json
 
 app = Flask(__name__)
 
 @app.route('/verify_license', methods=['POST'])
 def verify_license():
-    keylist = open('key-list.txt','r')
-    VALID_LICENSE_KEYS = keylist.readlines()
+    # Load keys from JSON file
+    try:
+        with open('keys.json', 'r') as keyfile:
+            keys_data = json.load(keyfile)
+    except FileNotFoundError:
+        return jsonify({"status": "error", "message": "Key database not found"}), 500
 
-    i=0
-
-    while i<len(VALID_LICENSE_KEYS)-1:
-        key = VALID_LICENSE_KEYS[i][0:len(VALID_LICENSE_KEYS[i])-1]
-        VALID_LICENSE_KEYS[i] = key
-        i = i+1
+    # Get license key from request data
     data = request.get_json()
-    license_key = data.get('license_key')
+    license_key = data.get('key')
 
-    if license_key in VALID_LICENSE_KEYS:
-        return jsonify({"status": "valid"}), 200
-    else:
-        return jsonify({"status": "invalid"}), 403
+    # Check if the key exists in the JSON data
+    print(keys_data)
+    for entry in keys_data:
+        if entry['key'] == license_key:
+            return jsonify({
+                "status": "valid",
+                "username": entry['username'],
+                "subscription_type": entry['subscription_type'],
+                "version": "0.10"
+            }), 200
 
+    # If no matching key is found
+    return jsonify({"status": "invalid"}), 403
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

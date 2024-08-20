@@ -1,32 +1,40 @@
 import secrets
 import string
+import json
 
 def generate_key():
     alphabet = string.ascii_letters + string.digits
     return ''.join(secrets.choice(alphabet) for _ in range(16))
 
+# Get user full name and subscription type
+full_name = input("User full name: ")
+subscription_type = input("Subscription type: ")
+
+# Ensure the full name is not empty
+if len(full_name.strip()) == 0:
+    raise ValueError("User name must not be empty.")
+
 # Generate a random key
 key = generate_key()
 
-# Get user initials
-initials = input("User initials: ")
+# Create an entry for this key
+key_entry = {
+    "key": key,
+    "username": full_name,
+    "subscription_type": subscription_type
+}
 
-# Ensure the initials are exactly 2 characters long
-if len(initials) != 2:
-    raise ValueError("User initials must be exactly 2 characters long.")
+# Append the new key entry to a JSON file
+json_filename = 'keys.json'
+try:
+    with open(json_filename, 'r') as keyfile:
+        key_data = json.load(keyfile)
+except FileNotFoundError:
+    key_data = []
 
-# Replace first and last characters of key with user initials
-key = initials[0] + key[1:15] + initials[1]
+key_data.append(key_entry)
 
-# Append key to file
-with open('key-list.txt', 'a+') as keyfile:
-    keyfile.seek(0)
-    content = keyfile.read().strip()
-
-    if content == "":
-        keyfile.write(key)
-    else:
-        keyfile.write(f"\n{key}")
+with open(json_filename, 'w') as keyfile:
+    json.dump(key_data, keyfile, indent=4)
 
 print(f"Generated and saved key: {key}")
-
