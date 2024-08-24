@@ -8,11 +8,30 @@ def generate_key():
 
 # Get user full name and subscription type
 full_name = input("User full name: ")
-subscription_type = input("Subscription type: ")
 
 # Ensure the full name is not empty
 if len(full_name.strip()) == 0:
     raise ValueError("User name must not be empty.")
+
+subscription_type = input("Subscription type: ")
+
+validsubs = ['Speed','Silver','Gold','Platinum']
+if (subscription_type not in validsubs):
+    raise ValueError("Typo on key type")
+identitiesquestion = input("Identities number: ")
+
+access_token_chars = []
+
+i = 0
+if identitiesquestion == 1:
+    access_token_chars.append(input("First 10 letters/numbers of access token: "))
+else:
+    access_token_chars = []
+    while i<int(identitiesquestion):
+        access_token_chars.append(input(f"10 character of identity number {i+1}: "))
+        i += 1
+    
+
 
 # Generate a random key
 key = generate_key()
@@ -21,7 +40,8 @@ key = generate_key()
 key_entry = {
     "key": key,
     "username": full_name,
-    "subscription_type": subscription_type
+    "subscription_type": subscription_type,
+    "access_token_chars": access_token_chars
 }
 
 # Append the new key entry to a JSON file

@@ -17,14 +17,14 @@ def verify_license():
     license_key = data.get('key')
 
     # Check if the key exists in the JSON data
-    print(keys_data)
     for entry in keys_data:
         if entry['key'] == license_key:
             return jsonify({
                 "status": "valid",
                 "username": entry['username'],
                 "subscription_type": entry['subscription_type'],
-                "version": "0.10"
+                "access_token_chars": entry['access_token_chars'], 
+                "version": "0.12"
             }), 200
 
     # If no matching key is found
